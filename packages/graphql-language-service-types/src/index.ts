@@ -10,8 +10,10 @@ import {
   Diagnostic as DiagnosticType,
   Position as PositionType,
   CompletionItem as CompletionItemType,
+  SymbolKind,
 } from 'vscode-languageserver-protocol';
 import { GraphQLSchema, KindEnum } from 'graphql';
+
 import {
   ASTNode,
   DocumentNode,
@@ -32,6 +34,8 @@ import { GraphQLDirective } from 'graphql/type/directives';
 export { GraphQLConfig, GraphQLProjectConfig };
 import { GraphQLConfig, GraphQLProjectConfig } from 'graphql-config';
 
+export type Maybe<T> = null | T;
+
 export type TokenPattern = string | ((char: string) => boolean) | RegExp;
 
 export interface CharacterStream {
@@ -48,8 +52,8 @@ export interface CharacterStream {
   skipTo: (position: number) => void;
   match: (
     pattern: TokenPattern,
-    consume?: boolean | null | undefined,
-    caseFold?: boolean | null | undefined,
+    consume?: Maybe<boolean>,
+    caseFold?: Maybe<boolean>,
   ) => string[] | boolean;
   backUp: (num: number) => void;
   column: () => number;
@@ -210,11 +214,12 @@ export type RuleKind =
 export type State = {
   level: number;
   levels?: number[];
-  prevState: State | null | undefined;
-  rule: ParseRule | null | undefined;
-  kind: RuleKind | null | undefined;
-  name: string | null | undefined;
-  type: string | null | undefined;
+
+  prevState: Maybe<State>;
+  rule: Maybe<ParseRule>;
+  kind: Maybe<RuleKind>;
+  name: Maybe<string>;
+  type: Maybe<string>;
   step: number;
   needsSeperator: boolean;
   needsAdvance?: boolean;
@@ -248,15 +253,15 @@ export type ContextToken = {
 };
 
 export type AllTypeInfo = {
-  type: GraphQLType | null | undefined;
-  parentType: GraphQLType | null | undefined;
-  inputType: GraphQLType | null | undefined;
-  directiveDef: GraphQLDirective | null | undefined;
-  fieldDef: GraphQLField<any, any> | null | undefined;
-  enumValue: GraphQLEnumValue | null | undefined;
-  argDef: GraphQLArgument | null | undefined;
-  argDefs: GraphQLArgument[] | null | undefined;
-  objectFieldDefs: GraphQLInputFieldMap | null | undefined;
+  type: Maybe<GraphQLType>;
+  parentType: Maybe<GraphQLType>;
+  inputType: Maybe<GraphQLType>;
+  directiveDef: Maybe<GraphQLDirective>;
+  fieldDef: Maybe<GraphQLField<any, any>>;
+  enumValue: Maybe<GraphQLEnumValue>;
+  argDef: Maybe<GraphQLArgument>;
+  argDefs: Maybe<GraphQLArgument[]>;
+  objectFieldDefs: Maybe<GraphQLInputFieldMap>;
 };
 
 export type FragmentInfo = {
@@ -285,7 +290,7 @@ export type Diagnostic = DiagnosticType;
 
 export type CompletionItem = CompletionItemType & {
   isDeprecated?: boolean;
-  deprecationReason?: string;
+  deprecationReason?: Maybe<string>;
 };
 
 // Below are basically a copy-paste from Nuclide rpc types for definitions.
@@ -328,7 +333,7 @@ export type OutlineTree = {
   plainText?: string;
   tokenizedText?: TokenizedText;
   representativeName?: string;
-
+  kind: SymbolKind;
   startPosition: Position;
   endPosition?: Position;
   children: OutlineTree[];
